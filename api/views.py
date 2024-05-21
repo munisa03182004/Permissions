@@ -1,5 +1,6 @@
 import json
 
+import django.core.exceptions
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -56,3 +57,38 @@ def create_note(request):
 def create_user(request):
     if request.method == 'POST':
         username = request.data.get('username')
+        ...
+
+
+@api_view(['GET', 'PATCH', 'DELETE'])
+def note_detail(request, id):
+    try:
+        note = Note.objects.get(id=id)
+    except:
+        note = None
+
+    if not note:
+        return Response(data={"detail": "No such note with this ID"})
+
+    if request.method == 'GET':
+        note = NoteSerializer(instance=note, many=False).data
+        return Response(data=note)
+
+    elif request.method == 'PATCH':
+        title = request.data.get('title') or None
+        body = request.data.get('body') or None
+
+        if title:
+            note.title = title
+
+        if body:
+            note.body = body
+
+        note.save()
+        note = NoteSerializer(instance=note, many=False).data
+
+        return Response(data=note)
+
+    elif request.method == 'DELETE':
+        note.delete()
+        return Response(data='Deleted', status=status.HTTP_204_NO_CONTENT)
