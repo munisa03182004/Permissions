@@ -6,12 +6,6 @@ from app_main.models import Note
 User = get_user_model()
 
 
-class NoteSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Note
-        fields = ['id', 'owner', 'title', 'body', 'created', 'updated']
-
-
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -21,3 +15,11 @@ class UserSerializer(serializers.ModelSerializer):
                 'write_only': True,
             }
         }
+
+
+class NoteSerializer(serializers.ModelSerializer):
+    owner = UserSerializer()
+
+    class Meta:
+        model = Note
+        fields = ['id', 'owner', 'title', 'body', 'created', 'updated']
