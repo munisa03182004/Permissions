@@ -6,7 +6,7 @@ from rest_framework.response import Response
 
 from app_main.models import Note
 from .serializers import NoteSerializer, UserSerializer
-from .permissions import IsOwner
+from .permissions import IsOwner,IsOwnerOrReadOnly
 
 User = get_user_model()
 
@@ -26,3 +26,4 @@ class NoteViewSet(ModelViewSet):
 class UserViewSet(ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated,IsOwnerOrReadOnly]
